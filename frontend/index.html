@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media & Mental Health Research Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,600;1,300&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Design Tokens ───────────────────────────────────────── */
+  :root {
+    --ink:        #1a1a2e;
+    --ink-muted:  #4a4a6a;
+    --ink-faint:  #8888aa;
+    --surface:    #f7f6f2;
+    --white:      #ffffff;
+    --accent:     #2d6a9f;       /* academic blue */
+    --accent-lt:  #e8f0f8;
+    --warn:       #b05c20;
+    --warn-lt:    #fdf0e8;
+    --success:    #1a6b45;
+    --success-lt: #e8f5ee;
+    --danger:     #8b1a1a;
+    --danger-lt:  #faeaea;
+    --border:     #dddde8;
+    --radius:     6px;
+    --shadow:     0 2px 12px rgba(26,26,46,.08);
+    --font-serif: 'IBM Plex Serif', Georgia, serif;
+    --font-sans:  'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono:  'IBM Plex Mono', monospace;
+  }
+
+  /* ── Reset ───────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.65;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Layout ──────────────────────────────────────────────── */
+  .app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    background: var(--ink);
+    color: var(--white);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-brand {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    opacity: .9;
+  }
+  .header-badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: clamp(20px, 4vw, 40px) 20px 80px;
+    width: 100%;
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 760px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 32px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--ink) 0%, #2d2d4e 100%);
+    color: var(--white);
+  }
+  .card-body { padding: 36px 40px; }
+
+  /* ── Typography ──────────────────────────────────────────── */
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    font-weight: 300;
+    line-height: 1.3;
+    letter-spacing: -.01em;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.875rem;
+    opacity: .75;
+    font-weight: 300;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .eyebrow-light { color: rgba(255,255,255,.6); }
+
+  /* ── Progress ────────────────────────────────────────────── */
+  .progress-wrap {
+    padding: 16px 40px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width .4s ease;
+  }
+  .progress-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  /* ── Steps ───────────────────────────────────────────────── */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* ── Consent ─────────────────────────────────────────────── */
+  .consent-box {
+    background: var(--accent-lt);
+    border: 1px solid #c5d9ee;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-size: 0.9rem;
+  }
+  .consent-box ul { padding-left: 20px; margin-top: 8px; }
+  .consent-box li { margin-bottom: 4px; }
+  .consent-check {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-top: 18px;
+    background: var(--white);
+  }
+  .consent-check label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--ink);
+    margin: 0;
+    cursor: pointer;
+  }
+  .consent-check input {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+  .consent-error {
+    display: none;
+    color: var(--danger);
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
+  .consent-error.show { display: block; }
+  .disclaimer-box {
+    background: var(--warn-lt);
+    border-left: 3px solid var(--warn);
+    padding: 14px 18px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 0.85rem;
+    color: var(--warn);
+    margin: 16px 0;
+  }
+
+  /* ── Form Elements ───────────────────────────────────────── */
+  .field { margin-bottom: 20px; }
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+  input[type="number"],
+  input[type="text"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--white);
+    transition: border-color .2s;
+    appearance: none;
+    min-height: 44px;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,106,159,.1);
+  }
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .checkbox-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+    min-height: 40px;
+  }
+  .checkbox-pill input { display: none; }
+  .checkbox-pill:has(input:checked),
+  .checkbox-pill.checked {
+    background: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+  }
+
+  /* ── Likert Scale ────────────────────────────────────────── */
+  .question-block {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    transition: border-color .2s;
+  }
+  .question-block.answered { border-color: #c5d9ee; background: var(--accent-lt); }
+  .question-text {
+    font-size: 0.9rem;
+    color: var(--ink);
+    margin-bottom: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .question-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .likert-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .likert-option { flex: 1; min-width: 80px; }
+  .likert-option input { display: none; }
+  .likert-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 400;
+    text-align: center;
+    color: var(--ink-muted);
+    background: var(--white);
+    transition: all .15s;
+    line-height: 1.3;
+    min-height: 78px;
+  }
+  .likert-option label .score-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    transition: all .15s;
+  }
+  .likert-option input:checked + label {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-lt);
+  }
+  .likert-option input:checked + label .score-dot {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all .2s;
+    text-decoration: none;
+    min-height: 44px;
+    justify-content: center;
+    text-align: center;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #245a8a; border-color: #245a8a; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-muted);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--ink-muted); color: var(--ink); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-muted);
+    border: none;
+    padding: 11px 16px;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+  .btn-success {
+    background: var(--success);
+    color: var(--white);
+    border-color: var(--success);
+  }
+  .btn:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Results ─────────────────────────────────────────────── */
+  .results-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--white);
+  }
+  .risk-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: center;
+    padding: 22px 24px;
+    background: linear-gradient(135deg, #f9fbfd 0%, var(--accent-lt) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .risk-placeholder {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+  }
+  .risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .risk-low    { background: var(--success-lt); color: var(--success); }
+  .risk-moderate { background: #fff8e0; color: #7a5c00; }
+  .risk-high   { background: var(--warn-lt); color: var(--warn); }
+  .risk-very-high { background: var(--danger-lt); color: var(--danger); }
+
+  .score-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .score-number {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-meta { color: var(--ink-muted); font-size: 0.875rem; }
+  .score-bar-wrap {
+    background: var(--border);
+    border-radius: 4px;
+    height: 8px;
+    margin: 18px 24px 22px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--success) 0%, #e6a817 50%, var(--danger) 100%);
+    transition: width 1s ease;
+  }
+  .score-bar-indicator {
+    position: relative;
+    margin-top: -14px;
+  }
+
+  .factors-panel {
+    padding: 0 24px 22px;
+  }
+  .factors-list {
+    list-style: none;
+    margin: 12px 0;
+  }
+  .factors-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+  }
+  .factors-list li:last-child { border: none; }
+  .factor-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .explanation-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 16px 0;
+    white-space: pre-line;
+  }
+  .loading-shimmer {
+    background: linear-gradient(90deg, var(--border) 25%, #e9e9f0 50%, var(--border) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius);
+    height: 120px;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* ── Chat ────────────────────────────────────────────────── */
+  .chat-window {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    height: 360px;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .msg {
+    max-width: 82%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .msg-ai {
+    background: var(--white);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    border-radius: 4px 12px 12px 12px;
+  }
+  .msg-user {
+    background: var(--accent);
+    color: var(--white);
+    align-self: flex-end;
+    border-radius: 12px 4px 12px 12px;
+  }
+  .msg-sender {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+  }
+  .chat-input-row textarea {
+    flex: 1;
+    resize: none;
+    height: 60px;
+    font-size: 0.875rem;
+  }
+  .turn-counter {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    text-align: right;
+    margin-bottom: 6px;
+  }
+
+  /* ── Analysis ────────────────────────────────────────────── */
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .analysis-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    background: var(--white);
+  }
+  .analysis-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 4px;
+  }
+  .analysis-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .tag-true  { color: var(--warn); }
+  .tag-false { color: var(--success); }
+
+  /* ── Thank You ───────────────────────────────────────────── */
+  .thank-you-mark {
+    width: 64px;
+    height: 64px;
+    background: var(--success-lt);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+  }
+  .thank-you-body { padding: 60px 40px; }
+
+  /* ── Error ───────────────────────────────────────────────── */
+  .error-banner {
+    background: var(--danger-lt);
+    border: 1px solid #e8b4b4;
+    color: var(--danger);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    margin: 12px 0;
+    display: none;
+  }
+  .error-banner.show { display: block; }
+
+  /* ── Responsive ──────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .main { padding-inline: 18px; }
+    .card { max-width: 100%; }
+    .likert-option { flex-basis: calc(33.333% - 6px); }
+    .analysis-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 15px; }
+    .header {
+      padding: 12px 16px;
+      align-items: flex-start;
+    }
+    .header-brand { font-size: 0.95rem; }
+    .header-badge { font-size: 0.64rem; }
+    .main { padding: 14px 10px 48px; }
+    .card {
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      box-shadow: none;
+    }
+    .card-body { padding: 24px 18px; }
+    .card-header { padding: 24px 18px 20px; }
+    .progress-wrap {
+      padding: 12px 16px;
+      gap: 10px;
+      align-items: flex-start;
+      flex-direction: column-reverse;
+    }
+    .progress-bar-bg { width: 100%; }
+    h1 { font-size: 1.35rem; }
+    .consent-box,
+    .consent-check,
+    .explanation-box { padding: 16px; }
+    .checkbox-group { gap: 6px; }
+    .checkbox-pill {
+      flex: 1 1 calc(50% - 6px);
+      justify-content: center;
+      padding-inline: 10px;
+    }
+    .likert-row { flex-direction: column; }
+    .likert-option { min-width: auto; }
+    .likert-option label {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 10px;
+      min-height: 46px;
+      text-align: left;
+      padding: 10px 12px;
+    }
+    .risk-summary { grid-template-columns: 1fr; gap: 14px; }
+    .score-display { justify-content: flex-start; }
+    .score-number { font-size: 2.5rem; }
+    .score-bar-wrap { margin-inline: 18px; }
+    .factors-panel { padding-inline: 18px; }
+    .chat-window {
+      height: min(360px, 48vh);
+      padding: 12px;
+    }
+    .msg { max-width: 94%; }
+    .chat-input-row { flex-direction: column; }
+    .chat-input-row textarea { min-height: 88px; }
+    .chat-input-row .btn { width: 100%; }
+    .btn-row {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+    .btn-row .btn { width: 100%; }
+    .thank-you-body { padding: 44px 18px; }
+  }
+
+  @media (max-width: 380px) {
+    .header { gap: 8px; }
+    .header-badge { width: 100%; text-align: center; }
+    .checkbox-pill { flex-basis: 100%; }
+    .score-display { align-items: flex-start; flex-direction: column; gap: 2px; }
+    .score-number { font-size: 2.25rem; }
+  }
+
+  /* ── Utilities ───────────────────────────────────────────── */
+  .mt-8  { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mb-8  { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .text-muted { color: var(--ink-muted); }
+  .text-sm    { font-size: 0.85rem; }
+  .divider    { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+  .hidden     { display: none !important; }
+  .text-center { text-align: center; }
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Header -->
+  <header class="header">
+    <span class="header-brand">University Research Study</span>
+    <span class="header-badge">Academic Use Only</span>
+  </header>
+
+  <!-- Progress (hidden on landing) -->
+  <div class="progress-wrap hidden" id="progressWrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <span class="progress-label" id="progressLabel">Step 1 of 7</span>
+  </div>
+
+  <main class="main">
+    <div class="card">
+
+      <!-- ── STEP 0: Landing ─────────────────────────────── -->
+      <div class="step active" id="step-0">
+        <div class="card-header">
+          <div class="eyebrow eyebrow-light">Academic Research Study</div>
+          <h1>Exploring Social Media Behaviour & AI-Based Detection of Depression and Suicidal Ideation</h1>
+          <p class="subtitle mt-8">Conducted in partial fulfilment of academic research requirements</p>
+        </div>
+        <div class="card-body">
+          <p class="text-muted text-sm">This study investigates the relationship between social media usage patterns and mental health indicators including depression and suicidal ideation. Your participation helps advance understanding in this critical area.</p>
+
+          <div class="consent-box mt-16">
+            <h3>Participant Information & Consent</h3>
+            <p class="text-sm mt-8">Before proceeding, please note:</p>
+            <ul class="text-sm">
+              <li>Participation is entirely <strong>voluntary</strong> and you may withdraw at any time</li>
+              <li>Your responses will be <strong>anonymised</strong> and used for research purposes only</li>
+              <li>Data is stored securely and not shared with third parties</li>
+              <li>The AI features in this tool explain results only — they do <strong>not</strong> diagnose</li>
+              <li>The survey takes approximately <strong>10–15 minutes</strong></li>
+            </ul>
+          </div>
+
+          <div class="disclaimer-box">
+            ⚠️ <strong>Important:</strong> This is NOT a diagnostic tool. Results are for academic research only and do not constitute medical advice. If you are experiencing distress, please contact a mental health professional.
+          </div>
+
+          <div class="consent-check">
+            <label for="consentConfirm">
+              <input type="checkbox" id="consentConfirm" onchange="toggleBeginSurvey()">
+              <span class="text-sm">I confirm I am at least 18 years old, have read the participant information above, and consent to participate.</span>
+            </label>
+            <div class="consent-error" id="consentError">Please tick the consent box before beginning the survey.</div>
+          </div>
+
+          <div class="btn-row" style="justify-content:flex-end">
+            <button class="btn btn-primary" id="beginSurveyBtn" onclick="beginSurvey()" disabled>
+              Begin Survey →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 1: Personal Details ────────────────────── -->
+      <div class="step" id="step-1">
+        <div class="card-header">
+          <div class="eyebrow eyebrow-light">Section 1 of 5</div>
+          <h1>Personal & Demographic Information</h1>
+          <p class="subtitle">This information helps contextualise your responses. All data is anonymised.</p>
+        </div>
+        <div class="card-body">
+          <div class="error-banner" id="error-1">Please complete all required fields.</div>
+
+          <div class="field">
+            <label for="fullName">Full Name *</label>
+            <input type="text" id="fullName" autocomplete="name" placeholder="e.g. Jane Doe">
+          </div>
+          <div class="field">
+            <label for="age">Age *</label>
+            <input type="number" id="age" min="18" max="100" placeholder="e.g. 25">
+          </div>
+          <div class="field">
+            <label for="gender">Gender *</label>
+            <select id="gender">
+              <option value="">Select…</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Non-binary / Gender diverse</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="education">Highest Education Level *</label>
+            <select id="education">
+              <option value="">Select…</option>
+              <option>Secondary / High School</option>
+              <option>Undergraduate (in progress)</option>
+              <option>Bachelor's Degree</option>
+              <option>Postgraduate</option>
+              <option>Doctoral</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="hours">Average daily social media use (hours) *</label>
+            <input type="number" id="hours" min="0" max="24" step="0.5" placeholder="e.g. 3.5">
+          </div>
+          <div class="field">
+            <label>Social media platforms used regularly *</label>
+            <div class="checkbox-group" id="platformGroup">
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="Instagram"> Instagram</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="Twitter/X"> Twitter / X</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="Facebook"> Facebook</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="TikTok"> TikTok</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="LinkedIn"> LinkedIn</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="Snapchat"> Snapchat</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="YouTube"> YouTube</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="WhatsApp"> WhatsApp</label>
+              <label class="checkbox-pill" onclick="togglePill(this)"><input type="checkbox" value="Reddit"> Reddit</label>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="goToStep(0)">← Back</button>
+            <button class="btn btn-primary" onclick="validateAndNext(1)">Continue →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: Questions Q1–Q10 ────────────────────── -->
+      <div class="step" id="step-2">
+        <div class="card-header">
+          <div class="eyebrow eyebrow-light">Section 2 of 5</div>
+          <h1>Survey Questionnaire — Part A</h1>
+          <p class="subtitle">Questions 1–10. Please respond based on your experiences over the <em>past two weeks</em>.</p>
+        </div>
+        <div class="card-body">
+          <div class="error-banner" id="error-2">Please answer all questions before continuing.</div>
+          <div id="questions-1-10"></div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="goToStep(1)">← Back</button>
+            <button class="btn btn-primary" onclick="validateAndNext(2)">Continue →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Questions Q11–Q25 ───────────────────── -->
+      <div class="step" id="step-3">
+        <div class="card-header">
+          <div class="eyebrow eyebrow-light">Section 3 of 5</div>
+          <h1>Survey Questionnaire — Part B</h1>
+          <p class="subtitle">Questions 11–25. Please respond based on your experiences over the <em>past two weeks</em>.</p>
+        </div>
+        <div class="card-body">
+          <div class="error-banner" id="error-3">Please answer all questions before continuing.</div>
+          <div id="questions-11-25"></div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="goToStep(2)">← Back</button>
+            <button class="btn btn-primary" onclick="submitQuestionnaire()">
+              <span id="submitSpinner" class="spinner hidden"></span>
+              Submit Survey
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 4: Results ──────────────────────────────── -->
+      <div class="step" id="step-4">
+        <div class="card-header">
+          <div class="eyebrow eyebrow-light">Section 4 of 5</div>
+          <h1>Your Research Results</h1>
+          <p class="subtitle">Calculated by a rule-based scoring system. AI is used only to explain, not determine, your result.</p>
+        </div>
+        <div class="card-body">
+
+          <div class="results-panel">
+            <div class="risk-summary">
+              <div>
+                <div class="eyebrow">Risk Classification</div>
+                <div id="riskBadge" class="risk-placeholder">Calculating your survey score...</div>
+              </div>
+              <div class="score-display">
+                <span class="score-number" id="scoreNumber">—</span>
+                <span class="score-meta">out of 60<br><span id="scorePercent">—</span>%</span>
+              </div>
+            </div>
+
+            <div class="score-bar-wrap">
+              <div class="score-bar-fill" id="scoreBarFill" style="width:0%"></div>
+            </div>
+
+            <div class="factors-panel">
+              <div class="eyebrow">Contributing Factors Identified</div>
+              <ul class="factors-list" id="factorsList">
+                <li><span class="factor-dot"></span> Awaiting completed scoring.</li>
+              </ul>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="eyebrow">AI-Generated Explanation</div>
+          <p class="text-sm text-muted mb-8">The following explanation was generated by AI <em>based on the rule-based score above</em>. The AI did not determine your risk level.</p>
+          <div id="explanationBox" class="loading-shimmer"></div>
+          <div class="disclaimer-box mt-16" id="aiDisclaimer" style="display:none"></div>
+
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="skipChat()">Skip to completion →</button>
+            <button class="btn btn-primary" id="startChatBtn" onclick="startChat()" disabled>
+              Continue to optional conversation →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 5: Chat ─────────────────────────────────── -->
+      <div class="step" id="step-5">
+        <div class="card-header">
+          <div class="eyebrow eyebrow-light">Section 5 of 5 (Optional)</div>
+          <h1>Research Conversation</h1>
+          <p class="subtitle">Share more about your experiences to enrich the research analysis. This is entirely optional.</p>
+        </div>
+        <div class="card-body">
+          <div class="disclaimer-box">
+            This AI conversation is for research enrichment only. The AI will not provide therapy or diagnosis. You may end the conversation at any time.
+          </div>
+
+          <div class="turn-counter" id="turnCounter">0 / 10 exchanges</div>
+          <div class="chat-window" id="chatWindow"></div>
+
+          <div class="chat-input-row">
+            <textarea id="chatInput" placeholder="Type your response here…" onkeydown="handleChatKey(event)"></textarea>
+            <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">Send</button>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="endChat()">End conversation</button>
+            <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeChat()" style="display:none">
+              <span id="analyzeSpinner" class="spinner hidden"></span>
+              Analyse & Complete →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 6: Analysis ─────────────────────────────── -->
+      <div class="step" id="step-6">
+        <div class="card-header">
+          <div class="eyebrow eyebrow-light">Conversation Analysis</div>
+          <h1>Linguistic Pattern Analysis</h1>
+          <p class="subtitle">AI-generated analysis of your conversation for research purposes. This does not affect your risk classification.</p>
+        </div>
+        <div class="card-body">
+          <div id="analysisContent">
+            <div class="loading-shimmer"></div>
+          </div>
+          <div class="btn-row" style="justify-content:flex-end">
+            <button class="btn btn-primary" onclick="completeSubmission()">
+              <span id="completeSpinner" class="spinner hidden"></span>
+              Submit & Complete →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 7: Thank You ────────────────────────────── -->
+      <div class="step" id="step-7">
+        <div class="card-body text-center thank-you-body">
+          <div class="thank-you-mark">✓</div>
+          <h2>Thank You for Participating</h2>
+          <p class="text-muted mt-16" style="max-width:480px;margin-left:auto;margin-right:auto;">
+            Your responses have been recorded and will contribute to our academic research on social media behaviour and mental health. Your participation is greatly appreciated.
+          </p>
+          <div class="disclaimer-box mt-24" style="text-align:left;max-width:480px;margin-left:auto;margin-right:auto;">
+            <strong>Remember:</strong> If you are experiencing mental health difficulties, please reach out to a qualified mental health professional or contact a crisis helpline in your country.
+          </div>
+          <p class="text-sm text-muted mt-24">Reference ID: <span id="refId" class="font-mono" style="font-family:var(--font-mono)">—</span></p>
+          <div class="btn-row mt-24" style="justify-content:center">
+            <button class="btn btn-primary" onclick="returnHome()">Back to Homepage</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.card -->
+  </main>
+</div><!-- /.app-shell -->
+
+<script>
+/* ─────────────────────────────────────────────
+   CONFIGURATION
+───────────────────────────────────────────── */
+const API_BASE = window.location.origin + '/api';
+
+/* ─────────────────────────────────────────────
+   QUESTIONS DATA
+───────────────────────────────────────────── */
+const QUESTIONS = [
+  // Q1–Q5: Social Media Usage
+  { id:'Q1',  text:'I spend more time on social media than I intend to.' },
+  { id:'Q2',  text:'I feel anxious or restless when I cannot access social media.' },
+  { id:'Q3',  text:'I compare my life or appearance to others I see on social media.' },
+  { id:'Q4',  text:'Social media makes me feel connected to others.' },
+  { id:'Q5',  text:'I use social media as a way to escape problems or negative feelings.' },
+  // Q6–Q9: Core depression indicators (scored)
+  { id:'Q6',  text:'I have felt persistent sadness, emptiness, or hopelessness recently.' },
+  { id:'Q7',  text:'I have lost interest or pleasure in activities I previously enjoyed.' },
+  { id:'Q8',  text:'I have experienced difficulty concentrating, remembering, or making decisions.' },
+  { id:'Q9',  text:'I have felt the need to avoid socialising or withdraw from others.' },
+  // Q10–Q11: General wellbeing
+  { id:'Q10', text:'I feel that social media positively impacts my overall well-being.' },
+  { id:'Q11', text:'I am satisfied with my personal relationships both online and offline.' },
+  // Q12–Q16: More depression/mental health indicators (scored)
+  { id:'Q12', text:'I have experienced disrupted sleep patterns or insomnia recently.' },
+  { id:'Q13', text:'I have noticed significant changes in my appetite or eating habits.' },
+  { id:'Q14', text:'I have felt persistent low energy, tiredness, or fatigue.' },
+  { id:'Q15', text:'I have experienced feelings of worthlessness or excessive guilt.' },
+  { id:'Q16', text:'I have had recurrent thoughts about death, self-harm, or suicide.' },
+  // Q17: Coping
+  { id:'Q17', text:'I use social media to seek emotional support during difficult times.' },
+  // Q18–Q20: Social media & mental health interactions (scored)
+  { id:'Q18', text:'During periods of low mood, I reduce or avoid social media activity.' },
+  { id:'Q19', text:'I use social media as a primary way to cope with emotional distress.' },
+  { id:'Q20', text:"Seeing others' achievements or lifestyles online makes me feel worse about myself." },
+  // Q21–Q25: General
+  { id:'Q21', text:'I feel that my online persona differs significantly from my real self.' },
+  { id:'Q22', text:'I have unfollowed or blocked people online due to their negative impact on my mood.' },
+  { id:'Q23', text:'I believe social media has contributed to feelings of loneliness or isolation.' },
+  { id:'Q24', text:'I feel comfortable discussing my mental health openly on social media.' },
+  { id:'Q25', text:'I have sought or considered seeking mental health support due to social media use.' },
+];
+
+const LIKERT_OPTIONS = [
+  { value:1, label:'Strongly Disagree' },
+  { value:2, label:'Disagree' },
+  { value:3, label:'Undecided' },
+  { value:4, label:'Agree' },
+  { value:5, label:'Strongly Agree' },
+];
+
+/* ─────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────── */
+let state = {
+  currentStep: 0,
+  personalDetails: {},
+  responses: {},
+  scoreResult: null,
+  aiExplanation: '',
+  sessionId: null,
+  chatHistory: [],
+  conversationAnalysis: null,
+  submissionId: null,
+  isSubmitting: false,
+  hasSubmitted: false,
+};
+
+function createInitialState() {
+  return {
+    currentStep: 0,
+    personalDetails: {},
+    responses: {},
+    scoreResult: null,
+    aiExplanation: '',
+    sessionId: null,
+    chatHistory: [],
+    conversationAnalysis: null,
+    submissionId: null,
+    isSubmitting: false,
+    hasSubmitted: false,
+  };
+}
+
+/* ─────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderQuestions('questions-1-10', QUESTIONS.slice(0,10));
+  renderQuestions('questions-11-25', QUESTIONS.slice(10));
+});
+
+/* ─────────────────────────────────────────────
+   QUESTION RENDERING
+───────────────────────────────────────────── */
+function renderQuestions(containerId, questions) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = questions.map(q => `
+    <div class="question-block" id="block-${q.id}">
+      <div class="question-num">${q.id}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="likert-row">
+        ${LIKERT_OPTIONS.map(opt => `
+          <div class="likert-option">
+            <input type="radio" name="${q.id}" id="${q.id}-${opt.value}" value="${opt.value}"
+              onchange="recordResponse('${q.id}', ${opt.value})">
+            <label for="${q.id}-${opt.value}">
+              <span class="score-dot">${opt.value}</span>
+              ${opt.label}
+            </label>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function recordResponse(qId, value) {
+  // Pydantic expects ints; coerce here to avoid FastAPI 422 validation errors.
+  state.responses[qId] = Number.parseInt(value, 10);
+  document.getElementById(`block-${qId}`).classList.add('answered');
+}
+
+
+/* ─────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────── */
+const STEP_COUNT = 7;
+const STEP_PROGRESS = [0, 14, 28, 43, 57, 71, 86, 100];
+
+function goToStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(`step-${n}`).classList.add('active');
+  state.currentStep = n;
+  updateProgress(n);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function toggleBeginSurvey() {
+  const consent = document.getElementById('consentConfirm');
+  const beginBtn = document.getElementById('beginSurveyBtn');
+  const error = document.getElementById('consentError');
+  beginBtn.disabled = !consent.checked;
+  if (consent.checked) error.classList.remove('show');
+}
+
+function beginSurvey() {
+  const consent = document.getElementById('consentConfirm');
+  if (!consent.checked) {
+    document.getElementById('consentError').classList.add('show');
+    return;
+  }
+  goToStep(1);
+}
+
+function returnHome() {
+  state = createInitialState();
+
+  ['fullName', 'age', 'gender', 'education', 'hours', 'chatInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = '';
+      el.disabled = false;
+    }
+  });
+
+  document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+    input.checked = false;
+  });
+  document.getElementById('beginSurveyBtn').disabled = true;
+  document.getElementById('consentError').classList.remove('show');
+  document.querySelectorAll('.checkbox-pill.checked').forEach(pill => pill.classList.remove('checked'));
+  document.querySelectorAll('.question-block.answered').forEach(block => block.classList.remove('answered'));
+  document.querySelectorAll('.error-banner.show').forEach(error => error.classList.remove('show'));
+
+  document.getElementById('scoreNumber').textContent = '—';
+  document.getElementById('scorePercent').textContent = '—';
+  document.getElementById('scoreBarFill').style.width = '0%';
+  document.getElementById('riskBadge').className = 'risk-placeholder';
+  document.getElementById('riskBadge').textContent = 'Calculating your survey score...';
+  document.getElementById('factorsList').innerHTML = '<li><span class="factor-dot"></span> Awaiting completed scoring.</li>';
+  document.getElementById('explanationBox').className = 'loading-shimmer';
+  document.getElementById('explanationBox').textContent = '';
+  document.getElementById('aiDisclaimer').style.display = 'none';
+  document.getElementById('chatWindow').innerHTML = '';
+  document.getElementById('turnCounter').textContent = '0 / 10 exchanges';
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('sendBtn').textContent = 'Send';
+  document.getElementById('startChatBtn').disabled = true;
+  document.getElementById('analyzeBtn').style.display = 'none';
+  document.getElementById('analysisContent').innerHTML = '<div class="loading-shimmer"></div>';
+  document.getElementById('refId').textContent = '—';
+
+  goToStep(0);
+}
+
+function updateProgress(n) {
+  const wrap = document.getElementById('progressWrap');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  if (n === 0) { wrap.classList.add('hidden'); return; }
+  wrap.classList.remove('hidden');
+  fill.style.width = STEP_PROGRESS[n] + '%';
+  label.textContent = `Step ${n} of ${STEP_COUNT}`;
+}
+
+/* ─────────────────────────────────────────────
+   VALIDATION
+───────────────────────────────────────────── */
+function togglePill(el) {
+  el.classList.toggle('checked');
+}
+
+function validateAndNext(step) {
+  hideError(step);
+  if (step === 1) {
+    const fullName = document.getElementById('fullName').value.trim();
+    const age = document.getElementById('age').value;
+    const gender = document.getElementById('gender').value;
+    const education = document.getElementById('education').value;
+    const hours = document.getElementById('hours').value;
+    const platforms = [...document.querySelectorAll('#platformGroup input:checked')].map(i => i.value);
+    if (!fullName || !age || !gender || !education || !hours || platforms.length === 0) {
+      showError(1); return;
+    }
+    state.personalDetails = {
+      full_name: fullName,
+      age: parseInt(age),
+      gender,
+      education,
+      social_media_hours: parseFloat(hours),
+      platforms_used: platforms,
+    };
+  }
+  if (step === 2) {
+    const qs = QUESTIONS.slice(0,10);
+    const unanswered = qs.filter(q => !state.responses[q.id]);
+    if (unanswered.length > 0) { showError(2); return; }
+  }
+  goToStep(step + 1);
+}
+
+function showError(step) {
+  const el = document.getElementById(`error-${step}`);
+  if (el) { el.classList.add('show'); el.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+}
+function hideError(step) {
+  const el = document.getElementById(`error-${step}`);
+  if (el) el.classList.remove('show');
+}
+
+/* ─────────────────────────────────────────────
+   SUBMIT QUESTIONNAIRE → SCORE + EXPLAIN
+───────────────────────────────────────────── */
+async function submitQuestionnaire() {
+  hideError(3);
+  const qs = QUESTIONS.slice(10);
+  const unanswered = qs.filter(q => !state.responses[q.id]);
+  if (unanswered.length > 0) { showError(3); return; }
+
+  // Check ALL 25 answered
+  const allUnanswered = QUESTIONS.filter(q => !state.responses[q.id]);
+  if (allUnanswered.length > 0) { showError(3); return; }
+
+  setLoading('submitSpinner', true);
+  goToStep(4);
+
+  try {
+    // 1. Score
+    const scoreRes = await apiFetch('/submit', {
+      method:'POST',
+      body: JSON.stringify({
+        personal_details: state.personalDetails,
+        responses: state.responses,
+      })
+    });
+    state.scoreResult = scoreRes;
+    renderResults(scoreRes);
+
+    // 2. Explain (AI)
+    const explainRes = await apiFetch('/explain', {
+      method:'POST',
+      body: JSON.stringify({
+        score: scoreRes.total_score,
+        risk_level: scoreRes.risk_level,
+        key_factors: scoreRes.key_factors,
+      })
+    });
+    state.aiExplanation = explainRes.explanation;
+    renderExplanation(explainRes);
+    document.getElementById('startChatBtn').disabled = false;
+  } catch(e) {
+    document.getElementById('explanationBox').innerHTML = `<span class="text-muted text-sm">Could not load AI explanation: ${e.message}</span>`;
+    document.getElementById('startChatBtn').disabled = false;
+  } finally {
+    setLoading('submitSpinner', false);
+  }
+}
+
+function renderResults(result) {
+  document.getElementById('scoreNumber').textContent = result.total_score;
+  document.getElementById('scorePercent').textContent = result.percentage;
+
+  const pct = result.percentage;
+  document.getElementById('scoreBarFill').style.width = pct + '%';
+
+  const riskMap = {
+    'Low Risk':       ['risk-low', '● Low Risk'],
+    'Moderate Risk':  ['risk-moderate', '◐ Moderate Risk'],
+    'High Risk':      ['risk-high', '▲ High Risk'],
+    'Very High Risk': ['risk-very-high', '■ Very High Risk'],
+  };
+  const [cls, text] = riskMap[result.risk_level] || ['risk-low', result.risk_level];
+  document.getElementById('riskBadge').className = '';
+  document.getElementById('riskBadge').innerHTML = `<span class="risk-badge ${cls}">${text}</span>`;
+
+  const list = document.getElementById('factorsList');
+  if (result.key_factors.length === 0) {
+    list.innerHTML = '<li><span class="factor-dot" style="background:var(--success)"></span> No strongly indicated risk factors</li>';
+  } else {
+    list.innerHTML = result.key_factors.map(f =>
+      `<li><span class="factor-dot"></span>${f}</li>`
+    ).join('');
+  }
+}
+
+function renderExplanation(data) {
+  const box = document.getElementById('explanationBox');
+  box.className = 'explanation-box';
+  box.textContent = data.explanation;
+  const disc = document.getElementById('aiDisclaimer');
+  disc.textContent = data.disclaimer;
+  disc.style.display = 'block';
+}
+
+/* ─────────────────────────────────────────────
+   CHAT
+───────────────────────────────────────────── */
+async function startChat() {
+  goToStep(5);
+  try {
+    const res = await apiFetch('/chat/start', { method:'POST', body:'{}' });
+    state.sessionId = res.session_id;
+    appendMessage('ai', res.opening_message);
+  } catch(e) {
+    // If AI startup fails, still allow the chat to proceed using the server-side session.
+    try {
+      const res = await apiFetch('/chat/start', { method:'POST', body:'{}' });
+      state.sessionId = res.session_id;
+    } catch (ignored) {}
+
+    appendMessage(
+      'ai',
+      'Welcome. Feel free to share anything about your social media experiences and emotional well-being. This is a safe, voluntary space for research.'
+    );
+  }
+}
+
+
+function skipChat() {
+  // If skipping the optional chat, still ensure we show the analysis page
+  // (even if analysis is empty) before completion.
+  state.chatHistory = state.chatHistory || [];
+  goToStep(6);
+  document.getElementById('analysisContent').innerHTML = '<div class="explanation-box">You skipped the conversation. The research completion step will still record your survey results.</div>';
+  // Proceed to final submission immediately.
+  completeSubmission();
+}
+
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  appendMessage('user', text);
+  state.chatHistory.push({ role:'user', content:text });
+
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.disabled = true;
+  sendBtn.textContent = '…';
+
+  try {
+    const res = await apiFetch('/chat/message', {
+      method:'POST',
+      body: JSON.stringify({
+        session_id: state.sessionId || 'local',
+        message: text,
+        history: state.chatHistory.slice(-10),
+      })
+    });
+    appendMessage('ai', res.reply);
+    state.chatHistory.push({ role:'assistant', content:res.reply });
+    updateTurnCounter(res.turn_count);
+
+    if (res.should_end) {
+      input.disabled = true;
+      sendBtn.disabled = true;
+      document.getElementById('analyzeBtn').style.display = 'inline-flex';
+    }
+  } catch(e) {
+    appendMessage('ai', 'I\'m sorry, I\'m having trouble responding right now. Please try again or end the conversation.');
+  } finally {
+    sendBtn.disabled = input.disabled;
+    sendBtn.textContent = 'Send';
+  }
+}
+
+function appendMessage(role, text) {
+  const window_ = document.getElementById('chatWindow');
+  const div = document.createElement('div');
+  div.className = `msg msg-${role}`;
+  div.innerHTML = `<div class="msg-sender">${role === 'ai' ? 'Research AI' : 'You'}</div>${escapeHtml(text)}`;
+  window_.appendChild(div);
+  window_.scrollTop = window_.scrollHeight;
+}
+
+function updateTurnCounter(count) {
+  document.getElementById('turnCounter').textContent = `${count} / 10 exchanges`;
+  if (count >= 8) {
+    document.getElementById('analyzeBtn').style.display = 'inline-flex';
+  }
+}
+
+function endChat() {
+  document.getElementById('chatInput').disabled = true;
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('analyzeBtn').style.display = 'inline-flex';
+}
+
+async function analyzeChat() {
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  analyzeBtn.disabled = true;
+  // Always show the analysis page before completion.
+  goToStep(6);
+  setLoading('analyzeSpinner', true);
+
+  // If no conversation, complete immediately after rendering a fallback.
+  if (!state.chatHistory || state.chatHistory.length === 0) {
+    document.getElementById('analysisContent').innerHTML = '<div class="explanation-box">No conversation transcript was provided. The study will still record your survey responses.</div>';
+    setLoading('analyzeSpinner', false);
+    completeSubmission();
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/chat/analyze', {
+      method:'POST',
+      body: JSON.stringify({
+        session_id: state.sessionId || 'local',
+        transcript: state.chatHistory,
+      })
+    });
+    state.conversationAnalysis = res;
+    renderAnalysis(res);
+  } catch(e) {
+    // AI may be unavailable; keep the user on the analysis page with fallback content.
+    document.getElementById('analysisContent').innerHTML = `<p class="text-muted text-sm">Analysis unavailable: ${e.message}</p>`;
+  } finally {
+    setLoading('analyzeSpinner', false);
+    analyzeBtn.disabled = false;
+  }
+}
+
+
+function renderAnalysis(data) {
+  const boolTag = (v) => v
+    ? `<span class="tag-true">● Detected</span>`
+    : `<span class="tag-false">○ Not detected</span>`;
+
+  document.getElementById('analysisContent').innerHTML = `
+    <div class="analysis-grid">
+      <div class="analysis-card">
+        <div class="analysis-label">Overall Sentiment</div>
+        <div class="analysis-value">${capitalize(data.sentiment)}</div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-label">Emotional Tone</div>
+        <div class="analysis-value">${capitalize(data.emotional_tone)}</div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-label">Self-Reference Level</div>
+        <div class="analysis-value">${capitalize(data.self_reference_level)}</div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-label">Social Withdrawal Indicators</div>
+        <div class="analysis-value">${boolTag(data.social_withdrawal_indicators)}</div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-label">Uncertainty Language</div>
+        <div class="analysis-value">${boolTag(data.uncertainty_language)}</div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-label">Stress Indicators</div>
+        <div class="analysis-value">${boolTag(data.stress_indicators)}</div>
+      </div>
+    </div>
+    <div class="eyebrow mt-16">Summary</div>
+    <div class="explanation-box">${escapeHtml(data.summary)}</div>
+    <div class="eyebrow mt-16">Pattern Explanation</div>
+    <div class="explanation-box">${escapeHtml(data.pattern_explanation)}</div>
+    <div class="disclaimer-box mt-16">
+      This analysis is for academic research only. It does not update your risk classification and is not a clinical assessment.
+    </div>
+  `;
+}
+
+/* ─────────────────────────────────────────────
+   COMPLETE SUBMISSION
+───────────────────────────────────────────── */
+async function completeSubmission() {
+  if (state.isSubmitting || state.hasSubmitted) return;
+  state.isSubmitting = true;
+  if (!state.submissionId) state.submissionId = generateLocalRef();
+
+  const completeButtons = Array.from(document.querySelectorAll('button'))
+    .filter(btn => btn.textContent.includes('Submit & Complete') || btn.textContent.includes('Skip to completion'));
+  completeButtons.forEach(btn => { btn.disabled = true; });
+
+  setLoading('completeSpinner', true);
+  try {
+    const res = await apiFetch('/complete', {
+      method:'POST',
+      body: JSON.stringify({
+        submission_id: state.submissionId,
+        personal_details: state.personalDetails,
+        responses: state.responses,
+        score_result: state.scoreResult,
+        ai_explanation: state.aiExplanation,
+        transcript: state.chatHistory,
+        conversation_analysis: state.conversationAnalysis,
+      })
+    });
+    state.hasSubmitted = true;
+    document.getElementById('refId').textContent = res.row_id || generateLocalRef();
+    goToStep(7);
+  } catch(e) {
+    document.getElementById('refId').textContent = generateLocalRef();
+    goToStep(7);
+  } finally {
+    setLoading('completeSpinner', false);
+    state.isSubmitting = false;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────────── */
+async function apiFetch(path, options={}) {
+  const res = await fetch(API_BASE + path, {
+    headers: { 'Content-Type':'application/json' },
+    ...options,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail:'Unknown error' }));
+    throw new Error(err.detail || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+function setLoading(spinnerId, show) {
+  const el = document.getElementById(spinnerId);
+  if (el) el.classList.toggle('hidden', !show);
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function capitalize(str) {
+  return String(str).charAt(0).toUpperCase() + String(str).slice(1);
+}
+
+function generateLocalRef() {
+  return 'MHR-' + Date.now().toString(36).toUpperCase();
+}
+</script>
+</body>
+</html>
