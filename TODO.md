@@ -1,0 +1,3 @@
+- [ ] Add detailed OpenAI error logging (status code + response body) in backend/services/openai_service.py
+- [ ] Restart backend and reproduce failing endpoint
+- [ ] Use returned logs to adjust OpenAI request/model/config to eliminate error
